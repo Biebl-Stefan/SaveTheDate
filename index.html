@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Save the Date — Stefan & Sara</title>
+  <style>
+    @font-face {
+      font-family: 'Maellen';
+      src: url('Maellen-e9j06.otf') format('opentype');
+      font-display: swap;
+    }
+   
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #FAF8F5;
+      --charcoal: #1C1C1C;
+      --gold: #BFA76F;
+      --rule: #C8C0B0;
+    }
+
+    html, body {
+      background: var(--cream);
+      color: var(--charcoal);
+      font-family: 'Maellen', Georgia, serif;
+      min-height: 100vh;
+    }
+
+    /* ── Language toggle ── */
+    #lang-toggle {
+      position: fixed;
+      top: 1.5rem;
+      right: 2rem;
+      z-index: 100;
+      display: flex;
+      gap: 0;
+      font-family: Georgia, serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .lang-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      color: var(--charcoal);
+      opacity: 0.4;
+      transition: opacity 0.2s;
+      font-family: inherit;
+      font-size: inherit;
+      letter-spacing: inherit;
+    }
+
+    .lang-btn.active { opacity: 1; }
+    .lang-btn:hover { opacity: 0.8; }
+
+    .lang-sep {
+      display: flex;
+      align-items: center;
+      opacity: 0.3;
+      font-size: 0.65rem;
+    }
+
+    /* ── Card ── */
+    .card {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    /* ── Staggered fade-in ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Names ── */
+    .name {
+      font-size: clamp(3rem, 10vw, 5rem);
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      line-height: 1;
+      margin-top: 2rem;
+    }
+
+    .ampersand {
+      font-family: 'Maellen', cursive;
+      font-size: clamp(2rem, 6vw, 3rem);
+      letter-spacing: 0;
+      color: var(--charcoal);
+      margin: 0.4rem 0;
+      display: block;
+    }
+
+    /* ── Manor sketch ── */
+    .manor-wrap {
+      width: 100%;
+      max-width: 520px;
+      margin: 2.5rem 0;
+    }
+
+    .manor-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: grayscale(100%) contrast(1.05);
+    }
+
+    /* Placeholder SVG shown when no real image */
+    .manor-placeholder {
+      width: 100%;
+      max-width: 520px;
+      margin: 2.5rem 0;
+      border: 1px solid var(--rule);
+      padding: 3rem 2rem;
+      color: var(--rule);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+    }
+
+    .manor-placeholder svg {
+      width: 80px;
+      height: 80px;
+      opacity: 0.25;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Save the date ── */
+    .save-label {
+      font-size: clamp(1.4rem, 5vw, 2.2rem);
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      margin-top: 1rem;
+    }
+
+    .save-sub {
+      font-style: italic;
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      margin-top: 0.4rem;
+      color: #555;
+    }
+
+    /* ── Date block ── */
+    .date-wrap {
+      width: 100%;
+      max-width: 480px;
+      margin-top: 1.8rem;
+    }
+
+    .date-rule {
+      border: none;
+      border-top: 1px solid var(--rule);
+      width: 100%;
+      margin: 0.6rem 0;
+    }
+
+    .date-row {
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      gap: 0.6rem;
+    }
+
+    .date-col {
+      text-align: center;
+    }
+
+    .date-col.day,
+    .date-col.month {
+      font-size: clamp(2rem, 6vw, 3rem);
+      letter-spacing: 0.05em;
+      font-weight: 400;
+    }
+
+    .date-col.num {
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      font-family: Georgia, serif;
+    }
+
+    .date-sep {
+      display: none;
+    }
+
+    .date-year-written {
+      font-style: italic;
+      font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: #666;
+      margin-top: 0.5rem;
+    }
+
+    /* ── Countdown ── */
+    .countdown {
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      gap: 0.25rem;
+      margin-top: 1.8rem;
+      flex-wrap: wrap;
+    }
+
+    .countdown-unit {
+      display: flex;
+      align-items: baseline;
+      gap: 0.2rem;
+    }
+
+    .countdown-num {
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      font-weight: 300;
+      line-height: 1;
+      min-width: 2ch;
+      text-align: right;
+      font-family: Georgia, serif;
+    }
+
+    .countdown-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      opacity: 0.55;
+    }
+
+    .countdown-dot {
+      opacity: 0.25;
+      font-size: 0.7rem;
+      padding: 0 0.3rem;
+      align-self: center;
+    }
+
+    .countdown-expired {
+      font-style: italic;
+      font-size: 1.1rem;
+      letter-spacing: 0.05em;
+      color: var(--gold);
+    }
+
+    /* ── Invitation to follow ── */
+    .invitation-follow {
+      font-family: 'Maellen', cursive;
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      margin-top: 2.5rem;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Envelope CTA ── */
+    .envelope-wrap {
+      margin-top: 2.5rem;
+      margin-bottom: 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: pointer;
+    }
+
+    .envelope-icon {
+      width: 64px;
+      height: 48px;
+      transition: transform 0.25s ease, filter 0.25s ease;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0));
+    }
+
+    .envelope-wrap:hover .envelope-icon,
+    .envelope-wrap:focus .envelope-icon {
+      transform: translateY(-4px);
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.14));
+    }
+
+    .envelope-cta-label {
+      font-style: italic;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      color: #888;
+      transition: color 0.2s;
+    }
+
+    .envelope-wrap:hover .envelope-cta-label { color: var(--charcoal); }
+
+    .envelope-wrap:focus { outline: 2px solid var(--gold); outline-offset: 6px; border-radius: 2px; }
+
+    /* ── Intro / splash screen ── */
+    #intro-screen {
+      position: fixed;
+      inset: 0;
+      background: #0e0d0b;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: opacity 1s ease;
+    }
+
+    #intro-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #intro-tap-hint {
+      font-family: 'Maellen', serif;
+      font-style: italic;
+      font-size: clamp(0.85rem, 2.5vw, 1rem);
+      letter-spacing: 0.25em;
+      color: rgba(255,255,255,0.45);
+      position: absolute;
+      bottom: 3rem;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.45; }
+      50%       { opacity: 0.9; }
+    }
+
+    /* ── Intro video (full-screen inside intro) ── */
+    #intro-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* ── Card hidden until video done ── */
+    #lang-toggle,
+    .card {
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+    #lang-toggle.revealed,
+    .card.revealed {
+      opacity: 1;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      .card { padding: 4rem 1.2rem 3rem; }
+      #lang-toggle { top: 1rem; right: 1.2rem; }
+      .date-sep { display: none; }
+    }
+
+    /* ── Lang crossfade ── */
+    [data-en], [data-fr] {
+      transition: opacity 0.25s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Intro / Splash Screen -->
+  <div id="intro-screen" onclick="startVideo()" role="button" tabindex="0" aria-label="Tap to begin" onkeydown="if(event.key==='Enter'||event.key===' ')startVideo()">
+    <video id="intro-video" src="letter-open.mp4" playsinline preload="auto" muted></video>
+    <span id="intro-tap-hint">touch to begin</span>
+  </div>
+
+  <!-- Language Toggle -->
+  <nav id="lang-toggle" aria-label="Language selector">
+    <button class="lang-btn active" id="btn-en" onclick="setLang('en')" aria-label="English">EN</button>
+    <span class="lang-sep">|</span>
+    <button class="lang-btn" id="btn-fr" onclick="setLang('fr')" aria-label="Français">FR</button>
+  </nav>
+
+  <!-- Card -->
+  <main class="card">
+
+    <!-- Names -->
+    <div class="fade-in" id="block-names">
+      <h1 class="name">Stefan</h1>
+      <span class="ampersand">&amp;</span>
+      <h1 class="name">Sara</h1>
+    </div>
+
+
+    <!-- Save the Date -->
+    <div class="fade-in" id="block-save" style="margin-top: 0.5rem;">
+      <p class="save-label" data-key="save-label">SAVE THE DATE</p>
+      <p class="save-sub" data-key="save-sub">to celebrate our wedding</p>
+    </div>
+
+    <!-- Date Block -->
+    <div class="fade-in date-wrap" id="block-date">
+      <hr class="date-rule" />
+      <div class="date-row">
+        <div class="date-col day" data-key="day">Friday</div>
+        <span class="date-sep">|</span>
+        <div class="date-col num">18</div>
+        <span class="date-sep">|</span>
+        <div class="date-col month" data-key="month">July</div>
+      </div>
+      <hr class="date-rule" />
+      <p class="date-year-written" data-key="year-written">two thousand and twenty-six</p>
+    </div>
+
+    <!-- Countdown -->
+    <div class="fade-in" id="block-countdown">
+      <div class="countdown" id="countdown-display">
+        <div class="countdown-unit">
+          <span class="countdown-num" id="cd-days">—</span>
+          <span class="countdown-label" data-key="cd-days">days</span>
+        </div>
+        <span class="countdown-dot">·</span>
+        <div class="countdown-unit">
+          <span class="countdown-num" id="cd-hrs">—</span>
+          <span class="countdown-label" data-key="cd-hrs">hrs</span>
+        </div>
+        <span class="countdown-dot">·</span>
+        <div class="countdown-unit">
+          <span class="countdown-num" id="cd-min">—</span>
+          <span class="countdown-label" data-key="cd-min">min</span>
+        </div>
+        <span class="countdown-dot">·</span>
+        <div class="countdown-unit">
+          <span class="countdown-num" id="cd-sec">—</span>
+          <span class="countdown-label" data-key="cd-sec">sec</span>
+        </div>
+      </div>
+      <p class="countdown-expired" id="countdown-expired" style="display:none;" data-key="expired"></p>
+    </div>
+
+    <!-- Invitation to Follow -->
+    <div class="fade-in" id="block-invitation">
+      <p class="invitation-follow" data-key="invitation">Invitation to Follow</p>
+    </div>
+
+  </main>
+
+  <script>
+    // ── i18n ────────────────────────────────────────────────────────────────
+    const strings = {
+      en: {
+        'save-label':    'Save the Date',
+        'save-sub':      'to celebrate our wedding',
+        'day':           'Friday',
+        'month':         'July',
+        'year-written':  'two thousand and twenty-six',
+        'cd-days':       'days',
+        'cd-hrs':        'hrs',
+        'cd-min':        'min',
+        'cd-sec':        'sec',
+        'expired':       '',
+        'invitation':    'Invitation to Follow',
+        'envelope-cta':  'A little something for you',
+      },
+      fr: {
+        'save-label':    'Réservez la date',
+        'save-sub':      'pour célébrer notre mariage',
+        'day':           'Vendredi',
+        'month':         'Juillet',
+        'year-written':  'deux mille vingt-cinq',
+        'cd-days':       'jours',
+        'cd-hrs':        'h',
+        'cd-min':        'min',
+        'cd-sec':        'sec',
+        'expired':       '',
+        'invitation':    'Invitation à suivre',
+        'envelope-cta':  'Un petit quelque chose pour vous',
+      }
+    };
+
+    let currentLang = 'en';
+
+    function detectLang() {
+      const nav = navigator.language || navigator.userLanguage || 'en';
+      return nav.toLowerCase().startsWith('fr') ? 'fr' : 'en';
+    }
+
+    function setLang(lang) {
+      currentLang = lang;
+      // Swap text content
+      document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        if (strings[lang][key] !== undefined) {
+          el.style.opacity = '0';
+          setTimeout(() => {
+            el.textContent = strings[lang][key];
+            el.style.opacity = '1';
+          }, 150);
+        }
+      });
+      // Update toggle buttons
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+      document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+      // Update html lang attr
+      document.documentElement.lang = lang;
+      // Persist
+      try { localStorage.setItem('std-lang', lang); } catch(e) {}
+    }
+
+    // ── Countdown ────────────────────────────────────────────────────────────
+    const TARGET = new Date('2025-07-18T00:00:00');
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function tickCountdown() {
+      const now = new Date();
+      const diff = TARGET - now;
+
+      const display = document.getElementById('countdown-display');
+      const expired = document.getElementById('countdown-expired');
+
+      if (diff <= 0) {
+        display.style.display = 'none';
+        return;
+      }
+
+      const totalSec = Math.floor(diff / 1000);
+      const days = Math.floor(totalSec / 86400);
+      const hrs  = Math.floor((totalSec % 86400) / 3600);
+      const min  = Math.floor((totalSec % 3600) / 60);
+      const sec  = totalSec % 60;
+
+      document.getElementById('cd-days').textContent = days;
+      document.getElementById('cd-hrs').textContent  = pad(hrs);
+      document.getElementById('cd-min').textContent  = pad(min);
+      document.getElementById('cd-sec').textContent  = pad(sec);
+    }
+
+    // ── Intro / video flow ───────────────────────────────────────────────────
+    const introScreen = document.getElementById('intro-screen');
+    const introVideo  = document.getElementById('intro-video');
+    const tapHint     = document.getElementById('intro-tap-hint');
+    let   videoStarted = false;
+
+    function revealLandingPage() {
+      introScreen.classList.add('hidden');
+      setTimeout(() => { introScreen.style.display = 'none'; }, 1000);
+      document.querySelector('.card').classList.add('revealed');
+      document.getElementById('lang-toggle').classList.add('revealed');
+      revealBlocks();
+    }
+
+    // Pause on first frame as soon as enough data is available
+    introVideo.addEventListener('loadeddata', () => {
+      introVideo.currentTime = 0;
+      introVideo.pause();
+    });
+
+    function startVideo() {
+      if (videoStarted) return;
+      videoStarted = true;
+      tapHint.style.display = 'none';
+
+      introVideo.currentTime = 0;
+      introVideo.muted = false;
+
+      introVideo.play().catch(() => {
+        // Browser blocked unmuted play — try muted
+        introVideo.muted = true;
+        introVideo.play().catch(() => revealLandingPage());
+      });
+    }
+
+    introVideo.addEventListener('ended', revealLandingPage);
+    introVideo.addEventListener('error', revealLandingPage);
+
+    // ── Staggered fade-in ────────────────────────────────────────────────────
+    const blocks = [
+      'block-names',
+      'block-manor',
+      'manor-placeholder',
+      'block-save',
+      'block-date',
+      'block-countdown',
+      'block-invitation',
+    ];
+
+    function revealBlocks() {
+      blocks.forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        setTimeout(() => el.classList.add('visible'), 200 + i * 180);
+      });
+    }
+
+    // ── Init ─────────────────────────────────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', () => {
+      // Language
+      let lang = 'en';
+      try { lang = localStorage.getItem('std-lang') || detectLang(); } catch(e) { lang = detectLang(); }
+      setLang(lang);
+
+      // Countdown (runs in background, display hidden until revealed)
+      tickCountdown();
+      setInterval(tickCountdown, 1000);
+
+      // Blocks and card stay hidden — revealed after video ends
+    });
+  </script>
+</body>
+</html>
